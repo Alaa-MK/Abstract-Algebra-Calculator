@@ -1,0 +1,12 @@
+.inputGroup {
+    margin-bottom: 10px;
+}
+#sideViewContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+#sideViewGoButton {
+    margin: 0 20%
+}

@@ -6,7 +6,7 @@ export default class Group{
         this._operation = parse(operation).compile();
         
         this._closed = this._checkClosure();
-        this._associative = this.check_associativity();
+        this._associative = this._check_associativity();
         this._identity = this._findIdentity();
         this._inverses = this._findInverses();
     }
@@ -15,8 +15,12 @@ export default class Group{
     // PUBLIC FUNCTIONS
     //////////////////////////////////////////////
 
-    getSet(){
+    get set(){
         return this._set;
+    }
+
+    get identity(){
+        return this._identity;
     }
 
     isClosed(){
@@ -27,11 +31,7 @@ export default class Group{
         return this._associative;
     }
 
-    getIdentity(){
-        return this._identity;
-    }
-
-    getInverse(elem){
+    inverse(elem){
         return this._inverses[elem];
     }
 
@@ -85,7 +85,7 @@ export default class Group{
         return true;
     }
 
-    check_associativity(){
+    _check_associativity(){
         //checks if the group is associative under the given operation
         for (let i=0; i< this._set.length; i++){
             for(let j=0; j < this._set.length; j++){

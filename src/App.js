@@ -1,5 +1,6 @@
 import React from 'react';
 import Group from './Group';
+import SideView from './SideView'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
 import {
@@ -8,35 +9,33 @@ import {
   Col
 } from 'react-bootstrap'
 
-class SideView extends React.Component{
-  render(){
-    return (
-      <div>
-        Hello
-      </div>
-    )
-  }
-}
-
 class CommandView extends React.Component{
   render(){
     return (
       <div>
-        Hello
+        
       </div>
     )
   }
 }
 
 export default class App extends React.Component {
+  constructor(){
+    super();
+  }
+
+  onCreateGroup(set, operation){
+    const setList = set.split(',');
+    console.log(setList)
+    let g = new Group(setList, operation);
+  }
+
   render() {
-    let g = new Group([1,3,7,9], '(a*b)%10');
-    console.log("RESULT", g.evaluateExpression('3*7'))
     return (
       <Container fluid>
         <Row>
           <Col className='sideView' sm={4}>
-            <SideView/>
+            <SideView onCreateGroup={this.onCreateGroup}/>
           </Col>
           <Col className='commandView' sm={8}>
             <CommandView/>
