@@ -6,10 +6,11 @@ import {
     InputGroup,
     FormControl,
     Button,
-    Table
+    Table,
+    Alert
 } from 'react-bootstrap'
 
-function InputGroupWithTip(props){
+function InputGroupWithLabel(props){
     return (
         <InputGroup className='inputGroup'>
             <InputGroup.Prepend>
@@ -80,22 +81,26 @@ export default class SideView extends React.Component{
     }
 
     render(){
-        var info;
-        if (this.props.group)
+        var info, extraInfo;
+        if (this.props.group){
             info = {
                 'Closure': this.props.group.isClosed(),
                 'Associativity' : this.props.group.isAssociative(),
                 'Existence of Identity': this.props.group.identity !== null,
                 'Existence of Inverse': this.props.group.inverse(this.props.group.identity)
             }
+            extraInfo = {
+                'Abelian': this.props.group.isAbelian()
+            }
+        }
         return (
             <div id='sideViewContainer'>
-                <InputGroupWithTip 
+                <InputGroupWithLabel 
                     text='Set' 
                     onChange={this._setChanged}
                     defaultValue={this.state.set}
                 />
-                <InputGroupWithTip 
+                <InputGroupWithLabel 
                     text='Operation' 
                     onChange={this._operationChanged}
                     defaultValue={this.state.operation}
@@ -106,7 +111,10 @@ export default class SideView extends React.Component{
                 >
                     GO!
                 </Button>
-                {info && <GroupInfoView info={info}/>}
+                {info && <GroupInfoView info={info} extraInfo={extraInfo}/>}
+                {info && !this.props.group.isValidGroup() &&
+                    <Alert variant='danger'>Not a valid group!</Alert>
+                }
                 {this._getTable()}
             </div>
         )

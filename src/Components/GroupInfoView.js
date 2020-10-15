@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/GroupInfoView.css';
 import * as Icon from 'react-bootstrap-icons';
 import {
-    Card
+    Card,
 } from 'react-bootstrap'
 
 function InfoItem(props){
@@ -24,9 +24,17 @@ export default class GroupInfoView extends React.Component{
     render(){
       return (
         <Card id='groupInfoCard'>
-          {
-            Object.keys(this.props.info).map(key => <InfoItem key={key} name={key} value={this.props.info[key]}/>)
-          }
+          <div className='infoContaier'>
+            {
+              Object.keys(this.props.info).map(key => <InfoItem key={key} name={key} value={this.props.info[key]}/>)
+            }
+          </div>
+          <div className='infoContaier'>
+            {
+              Object.keys(this.props.extraInfo).map(key => <InfoItem key={key} name={key} value={this.props.extraInfo[key]}/>)
+            }
+          </div>
+
         </Card>
       )
     }
