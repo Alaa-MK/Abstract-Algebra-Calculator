@@ -1,29 +1,13 @@
 import React from 'react';
 import GroupInfoView from './GroupInfoView'
+import InputGroupWithLabel from './InputGroupWithLabel'
 import Group from '../Group';
 import '../styles/SideView.css';
 import {
-    InputGroup,
-    FormControl,
     Button,
     Table,
     Alert
 } from 'react-bootstrap'
-
-function InputGroupWithLabel(props){
-    return (
-        <InputGroup className='inputGroup'>
-            <InputGroup.Prepend>
-                <InputGroup.Text>{props.text}</InputGroup.Text>
-            </InputGroup.Prepend>
-            <FormControl
-                aria-label={props.text}
-                onChange={props.onChange}
-                defaultValue={props.defaultValue}
-            />
-        </InputGroup>
-    )
-}
 
 export default class SideView extends React.Component{
 

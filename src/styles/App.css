@@ -8,9 +8,15 @@
 }
 .sideView {
     background-color: var(--dark-blue);
-    min-height: 500px;
+    height: 100%;
+    overflow-y: auto;
 }
 .commandView {
     background-color: var(--lighter-blue);
-    min-height: 500px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+html, body, #root, #root>div, #root>div>div {
+    height: 100%
 }

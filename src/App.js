@@ -1,5 +1,6 @@
 import React from 'react';
 import SideView from './Components/SideView'
+import CommandView from './Components/CommandView'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
 import {
@@ -30,7 +31,7 @@ export default class App extends React.Component {
             <SideView group={this.state.group} onCreateGroup={this.onCreateGroup}/>
           </Col>
           <Col className='commandView' sm={8}>
-
+            <CommandView group={this.state.group}/>
           </Col>
         </Row>
       </Container>
