@@ -3,7 +3,7 @@ import {parse, FunctionNode, ConstantNode, SymbolNode} from 'mathjs'
 export default class Group{
     constructor(set, operation){
         this._set = Array.from(new Set(set));
-        this._operation = operation;
+        this._operation = parse(operation).compile();
         
         this._closed = this._checkClosure();
         this._associative = this.check_associativity();
@@ -42,9 +42,9 @@ export default class Group{
     isAbelian(){
         for (let i=0; i< this._set.length; i++){
             for(let j=i; j < this._set.length; j++){
-                let ab = this._operation(this._set[i], this._set[j]);
-                let ba = this._operation(this._set[j], this._set[i]);
-                if (ab != ba)
+                let ab = this._mult(this._set[i], this._set[j]);
+                let ba = this._mult(this._set[j], this._set[i]);
+                if (ab !== ba)
                     return false;
             }
         }
@@ -55,17 +55,17 @@ export default class Group{
         let tbl = '';
         for (let i=0; i< this._set.length; i++){
             for(let j=0; j < this._set.length; j++){
-                tbl += this._operation(this._set[i], this._set[j]) + '\t';
+                tbl += this._mult(this._set[i], this._set[j]) + '\t';
             }
             tbl += '\n';
         }
         return tbl;
     }
 
-    evaluate(expression){
+    evaluateExpression(expression){
         let tree = parse(expression);
         console.log(tree);
-        return this._evaluate(tree);
+        return this._evaluateExpression(tree);
     }
 
     
@@ -78,7 +78,7 @@ export default class Group{
         //checks if the group is closed under the given operation
         for (let i=0; i< this._set.length; i++){
             for(let j=i; j < this._set.length; j++){
-                if (this._set.indexOf(this._operation(this._set[i], this._set[j])) == -1)
+                if (this._set.indexOf(this._mult(this._set[i], this._set[j])) === -1)
                     return false;
             }
         }
@@ -93,11 +93,11 @@ export default class Group{
                     const a = this._set[i];
                     const b = this._set[j];
                     const c = this._set[k];
-                    const ab = this._operation(a, b);
-                    const bc = this._operation(b, c);
-                    const ab_c = this._operation(ab, c);
-                    const a_bc = this._operation(a, bc);
-                    if (ab_c != a_bc)
+                    const ab = this._mult(a, b);
+                    const bc = this._mult(b, c);
+                    const ab_c = this._mult(ab, c);
+                    const a_bc = this._mult(a, bc);
+                    if (ab_c !== a_bc)
                         return false;
                 }                
             }
@@ -110,7 +110,7 @@ export default class Group{
         for (let i=0; i< this._set.length; i++){
             let isIdentity = true;
             for(let j=0; j < this._set.length; j++){
-                if (this._operation(this._set[i], this._set[j]) != this._set[j]){
+                if (this._mult(this._set[i], this._set[j]) !== this._set[j]){
                     isIdentity = false;
                     break;
                 }
@@ -131,7 +131,7 @@ export default class Group{
             for(let j=i; j < this._set.length; j++){
                 if(inverses[this._set[j]])
                     continue ext;
-                if (this._operation(this._set[i], this._set[j]) == this._identity){
+                if (this._mult(this._set[i], this._set[j]) === this._identity){
                     inverse = this._set[j];
                     break;
                 }
@@ -144,32 +144,36 @@ export default class Group{
         return inverses;
     }
 
-    _evaluate(tree){
+    _evaluateExpression(tree){
         if (tree instanceof ConstantNode)
             return tree.value;
-        if(tree instanceof SymbolNode && tree.name == 'e')
+        if(tree instanceof SymbolNode && tree.name === 'e')
             return this._identity;
-        if(tree instanceof FunctionNode && tree.args.length == 1 && tree.fn.name == 'inv')
+        if(tree instanceof FunctionNode && tree.args.length === 1 && tree.fn.name === 'inv')
             return this.getInverse(tree.args[0])
-        if (tree.op == '*')
-            return this._operation(this._evaluate(tree.args[0]), this._evaluate(tree.args[1]));
-        if(tree.op == '^')
-            return (this._pow(this._evaluate(tree.args[0]), this._evaluate(tree.args[1])));
+        if (tree.op === '*')
+            return this._mult(this._evaluateExpression(tree.args[0]), this._evaluateExpression(tree.args[1]));
+        if(tree.op === '^')
+            return (this._pow(this._evaluateExpression(tree.args[0]), this._evaluateExpression(tree.args[1])));
         
         console.log ('Invalid expression!')
         return null;
     }
 
+    _mult(a, b){
+        return this._operation.evaluate({a, b})
+    }
+
     _pow(elem, n){
-        if (this._set.indexOf(elem) == -1){
+        if (this._set.indexOf(elem) === -1){
             console.log("Invalid power operation. Element is not in the set");
             return null;
         }
-        if (n == 0)
+        if (n === 0)
             return this._identity;
         let res = elem;
         for(let i=1; i<n; i++)
-            res = this._operation(res, elem);
+            res = this._mult(res, elem);
         return res;
     }
 }

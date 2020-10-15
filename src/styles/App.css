@@ -1,0 +1,11 @@
+.container {
+    margin-top: 40px;
+}
+.sideView {
+    background-color: red;
+    height: 500px;
+}
+.commandView {
+    background-color: green;
+    height: 500px;
+}
