@@ -1,0 +1,15 @@
+#groupInfoCard {
+    background-color: var(--light-blue);
+    margin-top: 20px;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.infoItem {
+    margin: 0 20px;
+}
+.icon {
+    margin-right: 6px;
+}

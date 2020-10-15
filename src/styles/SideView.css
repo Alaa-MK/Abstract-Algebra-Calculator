@@ -8,5 +8,6 @@
 }
 
 #sideViewGoButton {
-    margin: 0 20%
+    margin: 0 20%;
+    background-color: var(--lighter-blue);
 }

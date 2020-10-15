@@ -32,7 +32,7 @@ export default class Group{
     }
 
     inverse(elem){
-        return this._inverses[elem];
+        return this._inverses ? this._inverses[elem] : null;
     }
 
     isValidGroup(){

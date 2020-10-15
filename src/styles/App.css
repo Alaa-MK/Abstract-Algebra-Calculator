@@ -1,11 +1,16 @@
+:root{
+    --dark-blue: #12232E;
+    --lighter-blue: #007CC7;
+    --light-blue: #EEFBFB;
+}
 .container {
     margin-top: 40px;
 }
 .sideView {
-    background-color: #12232E;
+    background-color: var(--dark-blue);
     height: 600px;
 }
 .commandView {
-    background-color: #007CC7;
+    background-color: var(--lighter-blue);
     height: 600px;
 }

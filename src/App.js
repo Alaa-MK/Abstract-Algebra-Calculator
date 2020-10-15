@@ -1,6 +1,5 @@
 import React from 'react';
-import Group from './Group';
-import SideView from './SideView'
+import SideView from './Components/SideView'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
 import {
@@ -9,25 +8,18 @@ import {
   Col
 } from 'react-bootstrap'
 
-class CommandView extends React.Component{
-  render(){
-    return (
-      <div>
-        
-      </div>
-    )
-  }
-}
-
 export default class App extends React.Component {
   constructor(){
     super();
+    this.state = {
+      group: null
+    }
+    this.onCreateGroup = this.onCreateGroup.bind(this);
   }
 
-  onCreateGroup(set, operation){
-    const setList = set.split(',');
-    console.log(setList)
-    let g = new Group(setList, operation);
+  onCreateGroup(group){
+    this.setState({group});
+    console.log(group);
   }
 
   render() {
@@ -35,10 +27,10 @@ export default class App extends React.Component {
       <Container fluid>
         <Row>
           <Col className='sideView' sm={4}>
-            <SideView onCreateGroup={this.onCreateGroup}/>
+            <SideView group={this.state.group} onCreateGroup={this.onCreateGroup}/>
           </Col>
           <Col className='commandView' sm={8}>
-            <CommandView/>
+
           </Col>
         </Row>
       </Container>
