@@ -8,9 +8,9 @@
 }
 .sideView {
     background-color: var(--dark-blue);
-    height: 600px;
+    min-height: 500px;
 }
 .commandView {
     background-color: var(--lighter-blue);
-    height: 600px;
+    min-height: 500px;
 }

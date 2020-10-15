@@ -52,12 +52,13 @@ export default class Group{
     }
 
     operationTable(){
-        let tbl = '';
+        let tbl = [];
         for (let i=0; i< this._set.length; i++){
+            let row = []
             for(let j=0; j < this._set.length; j++){
-                tbl += this._mult(this._set[i], this._set[j]) + '\t';
+                row.push(this._mult(this._set[i], this._set[j]));
             }
-            tbl += '\n';
+            tbl.push(row);
         }
         return tbl;
     }
