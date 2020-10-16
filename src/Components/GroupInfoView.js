@@ -34,7 +34,6 @@ export default class GroupInfoView extends React.Component{
               Object.keys(this.props.extraInfo).map(key => <InfoItem key={key} name={key} value={this.props.extraInfo[key]}/>)
             }
           </div>
-
         </Card>
       )
     }

@@ -1,8 +1,8 @@
 import React from 'react';
-import SideView from './Components/SideView'
-import CommandView from './Components/CommandView'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
+import SideView from './Components/SideView'
+import CommandView from './Components/CommandView'
 import {
   Container,
   Row,
@@ -27,10 +27,10 @@ export default class App extends React.Component {
     return (
       <Container fluid>
         <Row>
-          <Col className='sideView' sm={4}>
+          <Col className='sideView' sm={6}>
             <SideView group={this.state.group} onCreateGroup={this.onCreateGroup}/>
           </Col>
-          <Col className='commandView' sm={8}>
+          <Col className='commandView' sm={6}>
             <CommandView group={this.state.group}/>
           </Col>
         </Row>

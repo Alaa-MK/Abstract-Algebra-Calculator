@@ -1,8 +1,28 @@
 #CommandViewContainer {
     display: flex;
     flex-direction: column;
-    margin: 20px 40px 20px 40px;
 }
 .executedCommand {
     margin-bottom: 10px;
+}
+.commandListItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+#CommandField {
+    background-color: white;
+    padding: 0 18px;
+    height: 48px;
+    margin: 10px 0;
+    border-radius: .25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.StaticMathField {
+    align-self: center;
+}
+.listGroupItem {
+    background-color: var(--light-blue);
 }

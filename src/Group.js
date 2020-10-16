@@ -1,4 +1,4 @@
-import {parse, FunctionNode, ConstantNode, SymbolNode} from 'mathjs'
+import {parse, FunctionNode, ParenthesisNode, OperatorNode, ConstantNode, SymbolNode} from 'mathjs'
 
 export default class Group{
     constructor(set, operation){
@@ -21,6 +21,10 @@ export default class Group{
 
     get identity(){
         return this._identity;
+    }
+
+    get order(){
+        return this._set.length;
     }
 
     isClosed(){
@@ -148,10 +152,14 @@ export default class Group{
     _evaluateExpression(tree){
         if (tree instanceof ConstantNode)
             return tree.value;
+        if (tree instanceof ParenthesisNode)
+            return this._evaluateExpression(tree.content);
+        if (tree instanceof OperatorNode && tree.op === '-')
+            return -this._evaluateExpression(tree.args[0])
         if(tree instanceof SymbolNode && tree.name === 'e')
             return this._identity;
         if(tree instanceof FunctionNode && tree.args.length === 1 && tree.fn.name === 'inv')
-            return this.getInverse(tree.args[0])
+            return this.inverse(this._evaluateExpression(tree.args[0]))
         if (tree.op === '*')
             return this._mult(this._evaluateExpression(tree.args[0]), this._evaluateExpression(tree.args[1]));
         if(tree.op === '^')
@@ -172,6 +180,12 @@ export default class Group{
         }
         if (n === 0)
             return this._identity;
+            
+        if (n < 0) {
+            console.log(n)
+            elem = this.inverse(elem);
+            n = -n;
+        }
         let res = elem;
         for(let i=1; i<n; i++)
             res = this._mult(res, elem);

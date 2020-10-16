@@ -71,7 +71,7 @@ export default class SideView extends React.Component{
                 'Closure': this.props.group.isClosed(),
                 'Associativity' : this.props.group.isAssociative(),
                 'Existence of Identity': this.props.group.identity !== null,
-                'Existence of Inverse': this.props.group.inverse(this.props.group.identity)
+                'Existence of Inverse': this.props.group.inverse(this.props.group.identity) !== null
             }
             extraInfo = {
                 'Abelian': this.props.group.isAbelian()

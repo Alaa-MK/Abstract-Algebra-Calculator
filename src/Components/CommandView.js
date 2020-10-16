@@ -1,51 +1,57 @@
 import React from 'react';
-import InputGroupWithLabel from './InputGroupWithLabel'
-import '../styles/CommandView.css';
 import {
-    Card
+    ListGroup
 } from 'react-bootstrap'
+import '../styles/CommandView.css';
+import {EditableMathField, StaticMathField, addStyles} from 'react-mathquill'
+import {parse} from 'mathjs';
 
 function ExecutedCommand (props){
+    const latex = '2^3';
     return (
-        <Card className='executedCommand'>
-            <Card.Header>{props.command}</Card.Header>
-            <Card.Body>
-                <Card.Text>{props.result}</Card.Text>
-            </Card.Body>
-        </Card>
+        <ListGroup.Item className='listGroupItem'>
+            <div className='commandListItem'>
+                <StaticMathField className='StaticMathField'>{props.commandLatex}</StaticMathField>
+                <StaticMathField className='StaticMathField'>= {parse(props.result).toTex()}</StaticMathField>
+            </div>
+        </ListGroup.Item>
     )
 }
 
 export default class CommandView extends React.Component {
     constructor(){
         super();
+        addStyles();
         this.state = {
-            executedCommands: []
+            executedCommands: [],
+            currentCommand: '',
+            currentLatex: ''
         }
         this._onKeyPress = this._onKeyPress.bind(this);
-        this._commandChanged = this._commandChanged.bind(this);
     }
 
     _onKeyPress(event){
         if (event.charCode === 13) {
             const result = this.props.group.evaluateExpression(this.state.currentCommand);
-            this.setState(prevState => ({executedCommands: [...prevState.executedCommands, {command: this.state.currentCommand, result: result}]}))
-            event.target.value = '';
+            this.setState(prevState => ({executedCommands: [...prevState.executedCommands, {commandLatex: this.state.currentLatex, result: result}]}))
+            this.setState({currentCommand: '', currentLatex: ''});
         }
-    }
-
-    _commandChanged(event){
-        this.setState({currentCommand: event.target.value})
     }
 
     render() {
         return (
+            this.props.group && this.props.group.isValidGroup() &&
             <div id='CommandViewContainer'>
-                {this.state.executedCommands.map(command => <ExecutedCommand {...command}/>)}
-                <InputGroupWithLabel
-                    text='>'
+                
+                <ListGroup>
+                    {this.state.executedCommands.map(command => <ExecutedCommand {...command}/>)}
+                </ListGroup>
+                
+                <EditableMathField
+                    id='CommandField'
+                    latex={this.state.currentLatex}                    
+                    onChange={field => this.setState({currentCommand: field.text(), currentLatex: field.latex()})}
                     onKeyPress = {this._onKeyPress}
-                    onChange = {this._commandChanged}
                 />
             </div>
         );
