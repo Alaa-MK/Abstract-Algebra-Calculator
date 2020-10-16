@@ -6,7 +6,10 @@ import '../styles/SideView.css';
 import {
     Button,
     Table,
-    Alert
+    Alert,
+    Col,
+    Row,
+    Card
 } from 'react-bootstrap'
 
 export default class SideView extends React.Component{
@@ -15,20 +18,22 @@ export default class SideView extends React.Component{
         super();
         this.state = {
             set: '1,3,7,9',
-            operation: '(a*b)%10'
+            operation: '(a*b)%10',
+            info: null,
+            extraInfo: null
         }
         this._setChanged = this._setChanged.bind(this);
         this._operationChanged = this._operationChanged.bind(this);
         this._createGroup = this._createGroup.bind(this);
-        this._getTable = this._getTable.bind(this);
+        this.OperationTable = this.OperationTable.bind(this);
+        this.QuantitativeInfo = this.QuantitativeInfo.bind(this);
     }
 
-
-    _getTable(){
+    OperationTable(){
         if (!this.props.group)
             return null;
         return (
-            <Table bordered>
+            <Table bordered striped>
                 <thead>
                     <tr className='label'>
                         <th/>
@@ -47,6 +52,16 @@ export default class SideView extends React.Component{
         )
     }
 
+    QuantitativeInfo(){
+        if (!this.props.group || !this.props.group.isValidGroup())
+            return null;
+        return (
+            <Card id='quantitativeInfoContainer'>
+                {Object.keys(this.state.quantitativeInfo).map(key => <p><b>{key}: </b>{this.state.quantitativeInfo[key]}</p>)}
+            </Card>
+        )
+    }
+
     _setChanged(event){
         this.setState({set: event.target.value})
     }
@@ -62,21 +77,24 @@ export default class SideView extends React.Component{
         });
         const g = new Group(setList, this.state.operation);
         this.props.onCreateGroup(g);
+        this.setState({
+            info: {
+                'Closure': g.isClosed(),
+                'Associativity' : g.isAssociative(),
+                'Existence of Identity': g.identity !== null,
+                'Existence of Inverse': g.inverse(g.identity) !== null
+            },
+            extraInfo: {
+                'Abelian': g.isAbelian()
+            },
+            quantitativeInfo: {
+                'Order': g.groupOrder,
+                'Identity': g.identity
+            }
+        })
     }
 
     render(){
-        var info, extraInfo;
-        if (this.props.group){
-            info = {
-                'Closure': this.props.group.isClosed(),
-                'Associativity' : this.props.group.isAssociative(),
-                'Existence of Identity': this.props.group.identity !== null,
-                'Existence of Inverse': this.props.group.inverse(this.props.group.identity) !== null
-            }
-            extraInfo = {
-                'Abelian': this.props.group.isAbelian()
-            }
-        }
         return (
             <div id='sideViewContainer'>
                 <InputGroupWithLabel 
@@ -95,11 +113,18 @@ export default class SideView extends React.Component{
                 >
                     GO!
                 </Button>
-                {info && <GroupInfoView info={info} extraInfo={extraInfo}/>}
-                {info && !this.props.group.isValidGroup() &&
+                {this.state.info && <GroupInfoView info={this.state.info} extraInfo={this.state.extraInfo}/>}
+                {this.state.info && !this.props.group.isValidGroup() &&
                     <Alert variant='danger'>Not a valid group!</Alert>
                 }
-                {this._getTable()}
+                <Row>
+                    <Col sm={6} style={{paddingRight: 5}}>
+                        <this.QuantitativeInfo/>
+                    </Col>
+                    <Col sm={6} style={{paddingLeft: 5}}>
+                        <this.OperationTable/>
+                    </Col>
+                </Row>
             </div>
         )
     }

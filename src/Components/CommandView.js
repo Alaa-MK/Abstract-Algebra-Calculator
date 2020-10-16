@@ -32,7 +32,14 @@ export default class CommandView extends React.Component {
 
     _onKeyPress(event){
         if (event.charCode === 13) {
-            const result = this.props.group.evaluateExpression(this.state.currentCommand);
+            var result;
+            console.log(this.state.currentCommand)
+            try {
+                result = this.props.group.evaluateExpression(this.state.currentCommand);
+            }
+            catch (e) {
+                result = e;
+            }
             this.setState(prevState => ({executedCommands: [...prevState.executedCommands, {commandLatex: this.state.currentLatex, result: result}]}))
             this.setState({currentCommand: '', currentLatex: ''});
         }

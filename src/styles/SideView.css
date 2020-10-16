@@ -20,4 +20,19 @@
 
 Table {
     background-color: var(--light-blue);
+    margin-left: 0;
+}
+
+td, th {
+    text-align: center;
+}
+#quantitativeInfoContainer {
+    padding: 10px 20px;
+    margin-right: 0;
+}
+#quantitativeInfoContainer>p {
+    margin: 0;
+}
+Col {
+    padding: 0;
 }

@@ -18,9 +18,6 @@ function InfoItem(props){
 }
 
 export default class GroupInfoView extends React.Component{
-    constructor(){
-        super();
-    }
     render(){
       return (
         <Card id='groupInfoCard'>

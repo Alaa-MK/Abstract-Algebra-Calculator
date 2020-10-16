@@ -23,7 +23,7 @@ export default class Group{
         return this._identity;
     }
 
-    get order(){
+    get groupOrder(){
         return this._set.length;
     }
 
@@ -68,12 +68,26 @@ export default class Group{
     }
 
     evaluateExpression(expression){
-        let tree = parse(expression);
-        console.log(tree);
+        let tree = parse(this._preprocessExpression(expression));
+        console.log(this._preprocessExpression(expression), tree);
         return this._evaluateExpression(tree);
     }
 
-    
+    contains(element){
+        return this._set.indexOf(element) !== -1;
+    }
+
+    elementOrder(element){
+        let order = 0;
+        let curr = element;
+        for(let i=0; i < 10000; i++){
+            if (curr === this.identity)
+                return order;
+            curr = this._mult(curr, element);
+            order++;
+        }
+        return Infinity;
+    }
 
     //////////////////////////////////////////////
     // PRIVATE FUNCTIONS
@@ -83,7 +97,7 @@ export default class Group{
         //checks if the group is closed under the given operation
         for (let i=0; i< this._set.length; i++){
             for(let j=i; j < this._set.length; j++){
-                if (this._set.indexOf(this._mult(this._set[i], this._set[j])) === -1)
+                if (!this.contains(this._mult(this._set[i], this._set[j])))
                     return false;
             }
         }
@@ -158,15 +172,33 @@ export default class Group{
             return -this._evaluateExpression(tree.args[0])
         if(tree instanceof SymbolNode && tree.name === 'e')
             return this._identity;
-        if(tree instanceof FunctionNode && tree.args.length === 1 && tree.fn.name === 'inv')
-            return this.inverse(this._evaluateExpression(tree.args[0]))
-        if (tree.op === '*')
-            return this._mult(this._evaluateExpression(tree.args[0]), this._evaluateExpression(tree.args[1]));
-        if(tree.op === '^')
-            return (this._pow(this._evaluateExpression(tree.args[0]), this._evaluateExpression(tree.args[1])));
-        
-        console.log ('Invalid expression!')
-        return null;
+        if(tree instanceof FunctionNode && tree.args.length === 1) {
+            const elem = this._evaluateExpression(tree.args[0]);
+            if(!this.contains(elem))
+                throw(`Invalid Element (${elem})`);
+            if (tree.fn.name === 'inv')
+                return this.inverse(elem);
+            if (tree.fn.name === 'order')
+                return this.elementOrder(elem);
+            throw('Invalid Expression');    
+        }
+        if (tree.op === '*') {
+            const a = this._evaluateExpression(tree.args[0]);
+            const b = this._evaluateExpression(tree.args[1]);
+            if (!this.contains(a))
+                throw(`Invalid Element (${a})`);
+            if (!this.contains(b))
+                throw(`Invalid Element (${b})`);
+            return this._mult(a, b);
+        }
+        if(tree.op === '^') {
+            const a = this._evaluateExpression(tree.args[0]);
+            const b = this._evaluateExpression(tree.args[1]);
+            if (!this.contains(a))
+                throw(`Invalid Element (${a})`);
+            return (this._pow(a, b));
+        }
+        throw('Invalid Expression');
     }
 
     _mult(a, b){
@@ -174,9 +206,8 @@ export default class Group{
     }
 
     _pow(elem, n){
-        if (this._set.indexOf(elem) === -1){
-            console.log("Invalid power operation. Element is not in the set");
-            return null;
+        if (!this.contains(elem)){
+            throw(`Invalid Element (${elem})`)
         }
         if (n === 0)
             return this._identity;
@@ -190,5 +221,10 @@ export default class Group{
         for(let i=1; i<n; i++)
             res = this._mult(res, elem);
         return res;
+    }
+
+    _preprocessExpression(expression){
+        return expression.replace('i*n*v*', 'inv')
+                .replace(/\|(.*)\|/, 'order($1)');
     }
 }
