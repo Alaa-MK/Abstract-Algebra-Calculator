@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/SideView.css';
+import '../../styles/SideView.css';
 import {
     InputGroup,
     FormControl

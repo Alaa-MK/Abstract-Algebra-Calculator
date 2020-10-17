@@ -2,10 +2,10 @@ import React from 'react';
 import {
     ListGroup
 } from 'react-bootstrap'
-import '../styles/CommandView.css';
+import '../../styles/CommandView.css';
 import {EditableMathField, StaticMathField, addStyles} from 'react-mathquill'
-import {parse} from 'mathjs';
 import CommandExamples from './CommandExamples'
+import GroupHelper from '../../GroupHelper'
 
 function ExecutedCommand (props){
     const result = (props.errorOccured ? '' : '= ') + props.result.toString().replace(/,/g, ', ');
@@ -36,7 +36,7 @@ export default class CommandView extends React.Component {
         if (event.charCode === 13) {
             var result, errorOccured;
             try {
-                result = this.props.group.evaluateExpression(this.state.currentCommand);
+                result = GroupHelper.evaluateExpression(this.props.group, this.state.currentCommand);
                 errorOccured = false;
             }
             catch (e) {

@@ -1,8 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
-import SideView from './Components/SideView'
-import CommandView from './Components/CommandView'
+import SideView from './Components/SideView/SideView'
+import CommandView from './Components/CommandView/CommandView'
 import {
   Container,
   Row,

@@ -1,12 +1,13 @@
-import {parse, FunctionNode, ParenthesisNode, OperatorNode, ConstantNode, SymbolNode} from 'mathjs'
+import {parse} from 'mathjs'
 
 export default class Group{
     constructor(set, operation){
         this._set = Array.from(new Set(set));
+        this._operationText = operation;
         this._operation = parse(operation).compile();
         
         this._closed = this._checkClosure();
-        this._associative = this._check_associativity();
+        this._associative = this._checkAssociativity();
         this._identity = this._findIdentity();
         this._inverses = this._findInverses();
     }
@@ -67,11 +68,6 @@ export default class Group{
         return tbl;
     }
 
-    evaluateExpression(expression){
-        let tree = parse(this._preprocessExpression(expression));
-        return this._evaluateExpression(tree);
-    }
-
     contains(element){
         return this._set.indexOf(element) !== -1;
     }
@@ -115,6 +111,11 @@ export default class Group{
         return this.generators().length > 0;
     }
 
+    isSubGroup(s){
+        const g = new Group(s, this._operationText);
+        return g.isValidGroup();
+    }
+
     //////////////////////////////////////////////
     // PRIVATE FUNCTIONS
     //////////////////////////////////////////////
@@ -130,7 +131,7 @@ export default class Group{
         return true;
     }
 
-    _check_associativity(){
+    _checkAssociativity(){
         //checks if the group is associative under the given operation
         for (let i=0; i< this._set.length; i++){
             for(let j=0; j < this._set.length; j++){
@@ -166,7 +167,7 @@ export default class Group{
         return null;
     }
 
-    _findInverses(elem){
+    _findInverses(){
         // must not be called outside the class. Assumes this._identity is defined
         let inverses = {};
 
@@ -189,52 +190,6 @@ export default class Group{
         return inverses;
     }
 
-    _evaluateExpression(tree){
-        if (tree instanceof ConstantNode)
-            return tree.value;
-        if (tree instanceof ParenthesisNode)
-            return this._evaluateExpression(tree.content);
-        if (tree instanceof OperatorNode && tree.op === '-')
-            return -this._evaluateExpression(tree.args[0])
-        if(tree instanceof SymbolNode){
-            if(tree.name === 'e')
-                return this._identity;
-            if(tree.name === 'generators'){
-                return this.generators();
-            }
-        }
-        if (tree.op === '*') {
-            const a = this._evaluateExpression(tree.args[0]);
-            const b = this._evaluateExpression(tree.args[1]);
-            if (!this.contains(a))
-                throw(`Invalid Element (${a})`);
-            if (!this.contains(b))
-                throw(`Invalid Element (${b})`);
-            return this._mult(a, b);
-        }
-        if(tree.op === '^') {
-            const a = this._evaluateExpression(tree.args[0]);
-            const b = this._evaluateExpression(tree.args[1]);
-            if (!this.contains(a))
-                throw(`Invalid Element (${a})`);
-            return (this._pow(a, b));
-        }
-        if(tree instanceof FunctionNode && tree.args.length === 1) {
-            const elem = this._evaluateExpression(tree.args[0]);
-            if(!this.contains(elem))
-                throw(`Invalid Element (${elem})`);
-            if (tree.fn.name === 'inv')
-                return this.inverse(elem);
-            if (tree.fn.name === 'order')
-                return this.elementOrder(elem);
-            if (tree.fn.name === 'subGroupGeneratedByElement'){
-                return this.subGroupGeneratedByElement(elem);
-            }
-            throw('Invalid Expression');
-        }
-        throw('Invalid Expression');
-    }
-
     _mult(a, b){
         return this._operation.evaluate({a, b})
     }
@@ -254,11 +209,5 @@ export default class Group{
         for(let i=1; i<n; i++)
             res = this._mult(res, elem);
         return res;
-    }
-
-    _preprocessExpression(expression){
-        return expression.replace(/([a-zA-Z])\*/g, '$1')
-                .replace(/\|(.*)\|/, 'order($1)')
-                .replace(/<(.*)>/, 'subGroupGeneratedByElement($1)');
     }
 }

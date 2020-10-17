@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Button
 } from 'react-bootstrap'
-import '../styles/CommandExamples.css'
+import '../../styles/CommandExamples.css'
 import {StaticMathField} from 'react-mathquill'
 
 function COMMANDS(set) {
@@ -20,6 +20,7 @@ function COMMANDS(set) {
 function randomElement(items) {
     return items[Math.floor(Math.random() * items.length)];
 }
+
 export default class CommandExamples extends React.Component{
     constructor(){
         super();

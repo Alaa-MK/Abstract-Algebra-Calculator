@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/GroupInfoView.css';
+import '../../styles/GroupInfoView.css';
 import * as Icon from 'react-bootstrap-icons';
 import {
     Card,

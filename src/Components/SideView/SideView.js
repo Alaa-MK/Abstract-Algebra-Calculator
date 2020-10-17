@@ -1,8 +1,8 @@
 import React from 'react';
 import GroupInfoView from './GroupInfoView'
 import InputGroupWithLabel from './InputGroupWithLabel'
-import Group from '../Group';
-import '../styles/SideView.css';
+import Group from '../../Group';
+import '../../styles/SideView.css';
 import {
     Button,
     Table,
@@ -13,7 +13,6 @@ import {
 } from 'react-bootstrap'
 
 export default class SideView extends React.Component{
-
     constructor(){
         super();
         this.state = {
