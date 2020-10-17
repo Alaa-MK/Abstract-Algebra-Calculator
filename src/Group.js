@@ -85,22 +85,23 @@ export default class Group{
     }
 
     subGroupGeneratedByElement(element){
-        let s = [this.identity];
+        let s = new Set();
+        s.add(this.identity);
         let curr = this.identity;
         for (let i=0; i < this._set.length; i++){
             curr = this._mult(curr, element);
-            if (s.indexOf(curr) !== -1)
-                return s;
-            s.push(curr);
+            if (s.has(curr))
+                break;
+            s.add(curr);
         }
-        return s;
+        console.log('zzzz', new Group(s, this._operationText))
+        return new Group(s, this._operationText);
     }
 
     generators(){
         let result = [];
         for (let i=0; i < this._set.length; i++){
-            const s = this.subGroupGeneratedByElement(this._set[i]);
-            console.log(this._set[i], s.length, this.groupOrder)
+            const s = this.subGroupGeneratedByElement(this._set[i]).set;
             if (s.length == this.groupOrder)
                 result.push(this._set[i]);                
         }
@@ -111,9 +112,8 @@ export default class Group{
         return this.generators().length > 0;
     }
 
-    isSubGroup(s){
-        const g = new Group(s, this._operationText);
-        return g.isValidGroup();
+    toString(){
+        return this.set.toString();
     }
 
     //////////////////////////////////////////////

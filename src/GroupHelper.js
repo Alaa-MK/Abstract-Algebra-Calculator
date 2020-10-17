@@ -1,4 +1,5 @@
 import {parse, FunctionNode, ParenthesisNode, OperatorNode, ConstantNode, SymbolNode} from 'mathjs'
+import Group from './Group';
 
 export default class GroupHelper {
     static preprocessExpression(expression){
@@ -22,6 +23,8 @@ export default class GroupHelper {
         if(tree instanceof SymbolNode){
             if(tree.name === 'e')
                 return group._identity;
+            if(tree.name === 'G')
+                return group;
             if(tree.name === 'generators'){
                 return group.generators();
             }
@@ -44,14 +47,20 @@ export default class GroupHelper {
         }
         if(tree instanceof FunctionNode && tree.args.length === 1) {
             const elem = this._eval(group, tree.args[0]);
-            if(!group.contains(elem))
-                throw(`Invalid Element (${elem})`);
-            if (tree.fn.name === 'inv')
-                return group.inverse(elem);
-            if (tree.fn.name === 'order')
-                return group.elementOrder(elem);
-            if (tree.fn.name === 'subGroupGeneratedByElement'){
-                return group.subGroupGeneratedByElement(elem);
+            if (elem instanceof Group){
+                if (tree.fn.name === 'order')
+                    return elem.groupOrder;
+            }
+            else {
+                if(!group.contains(elem))
+                    throw(`Invalid Element (${elem})`);
+                if (tree.fn.name === 'order')
+                    return group.elementOrder(elem);
+                if (tree.fn.name === 'inv')
+                    return group.inverse(elem);
+                if (tree.fn.name === 'subGroupGeneratedByElement'){
+                    return group.subGroupGeneratedByElement(elem);
+                }
             }
             throw('Invalid Expression');
         }

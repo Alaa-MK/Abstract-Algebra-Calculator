@@ -84,7 +84,8 @@ export default class SideView extends React.Component{
                 'Existence of Inverse': g.inverse(g.identity) !== null
             },
             extraInfo: {
-                'Abelian': g.isAbelian()
+                'Abelian': g.isAbelian(),
+                'Cyclic': g.isCyclic()
             },
             quantitativeInfo: {
                 'Order': g.groupOrder,
@@ -112,8 +113,16 @@ export default class SideView extends React.Component{
                 >
                     GO!
                 </Button>
-                {this.state.info && <GroupInfoView info={this.state.info} extraInfo={this.state.extraInfo}/>}
-                {this.state.info && !this.props.group.isValidGroup() &&
+                {
+                    this.state.info && 
+                    <GroupInfoView 
+                        info={this.state.info} 
+                        extraInfo={this.state.extraInfo}
+                        renderExtraInfo={this.props.group.isValidGroup()}
+                    />
+                }
+                {
+                    this.state.info && !this.props.group.isValidGroup() &&
                     <Alert variant='danger'>Not a valid group!</Alert>
                 }
                 <Row>

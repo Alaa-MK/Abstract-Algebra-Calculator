@@ -17,21 +17,22 @@ function InfoItem(props){
   )
 }
 
-export default class GroupInfoView extends React.Component{
-    render(){
-      return (
-        <Card id='groupInfoCard'>
-          <div className='infoContaier'>
-            {
-              Object.keys(this.props.info).map(key => <InfoItem key={key} name={key} value={this.props.info[key]}/>)
-            }
-          </div>
-          <div className='infoContaier'>
-            {
-              Object.keys(this.props.extraInfo).map(key => <InfoItem key={key} name={key} value={this.props.extraInfo[key]}/>)
-            }
-          </div>
-        </Card>
-      )
-    }
-  }
+export default function GroupInfoView (props){
+  return (
+    <Card id='groupInfoCard'>
+      <div className='infoContaier'>
+        {
+          Object.keys(props.info).map(key => <InfoItem key={key} name={key} value={props.info[key]}/>)
+        }
+      </div>
+      {
+        props.renderExtraInfo &&
+        <div className='infoContaier'>
+          {
+            Object.keys(props.extraInfo).map(key => <InfoItem key={key} name={key} value={props.extraInfo[key]}/>)
+          }
+        </div>
+      }
+    </Card>
+  )
+}

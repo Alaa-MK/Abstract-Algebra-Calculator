@@ -1,6 +1,7 @@
 #CommandViewContainer {
     display: flex;
     flex-direction: column;
+    padding-top: 20px;
 }
 .executedCommand {
     margin-bottom: 10px;

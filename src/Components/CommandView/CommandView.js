@@ -45,6 +45,7 @@ export default class CommandView extends React.Component {
             }
             this.setState(prevState => ({executedCommands: [...prevState.executedCommands, {commandLatex: this.state.currentLatex, result: result, errorOccured: errorOccured}]}))
             this.setState({currentCommand: '', currentLatex: ''});
+            console.log(this.state.currentLatex)
         }
     }
 

@@ -8,11 +8,14 @@ import {StaticMathField} from 'react-mathquill'
 function COMMANDS(set) {
     return [
         'e',                                                    //identity
-        `|${randomElement(set)}|`,                              //order
+        '\\left|G\\right|',                                     //groupOrder
+        `\\left|${randomElement(set)}\\right|`,                 //order
         `inv(${randomElement(set)})`,                           //inverse
         `${randomElement(set)}\\cdot${randomElement(set)}`,     //multiplication
         `${randomElement(set)}^2`,                              //power
+        `((${randomElement(set)}\\cdot${randomElement(set)})\\cdot${randomElement(set)})^{-1}`,
         `<${randomElement(set)}>`,                              //generatedByEl
+        `\\left|<${randomElement(set)}>\\right|`,               //generatedByElOrder
         'generators'                                            //generators
     ]
 }
