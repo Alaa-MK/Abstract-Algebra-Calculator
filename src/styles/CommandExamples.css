@@ -1,0 +1,11 @@
+.exampleButton {
+    background-color: white;
+    padding: 4px 24px;
+    border-radius: 10px;
+    margin: 0 6px 10px 6px
+}
+#examplesContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}

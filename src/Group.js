@@ -69,7 +69,6 @@ export default class Group{
 
     evaluateExpression(expression){
         let tree = parse(this._preprocessExpression(expression));
-        console.log(this._preprocessExpression(expression), tree);
         return this._evaluateExpression(tree);
     }
 
@@ -87,6 +86,33 @@ export default class Group{
             order++;
         }
         return Infinity;
+    }
+
+    subGroupGeneratedByElement(element){
+        let s = [this.identity];
+        let curr = this.identity;
+        for (let i=0; i < this._set.length; i++){
+            curr = this._mult(curr, element);
+            if (s.indexOf(curr) !== -1)
+                return s;
+            s.push(curr);
+        }
+        return s;
+    }
+
+    generators(){
+        let result = [];
+        for (let i=0; i < this._set.length; i++){
+            const s = this.subGroupGeneratedByElement(this._set[i]);
+            console.log(this._set[i], s.length, this.groupOrder)
+            if (s.length == this.groupOrder)
+                result.push(this._set[i]);                
+        }
+        return result;
+    }
+
+    isCyclic(){
+        return this.generators().length > 0;
     }
 
     //////////////////////////////////////////////
@@ -170,17 +196,12 @@ export default class Group{
             return this._evaluateExpression(tree.content);
         if (tree instanceof OperatorNode && tree.op === '-')
             return -this._evaluateExpression(tree.args[0])
-        if(tree instanceof SymbolNode && tree.name === 'e')
-            return this._identity;
-        if(tree instanceof FunctionNode && tree.args.length === 1) {
-            const elem = this._evaluateExpression(tree.args[0]);
-            if(!this.contains(elem))
-                throw(`Invalid Element (${elem})`);
-            if (tree.fn.name === 'inv')
-                return this.inverse(elem);
-            if (tree.fn.name === 'order')
-                return this.elementOrder(elem);
-            throw('Invalid Expression');    
+        if(tree instanceof SymbolNode){
+            if(tree.name === 'e')
+                return this._identity;
+            if(tree.name === 'generators'){
+                return this.generators();
+            }
         }
         if (tree.op === '*') {
             const a = this._evaluateExpression(tree.args[0]);
@@ -198,6 +219,19 @@ export default class Group{
                 throw(`Invalid Element (${a})`);
             return (this._pow(a, b));
         }
+        if(tree instanceof FunctionNode && tree.args.length === 1) {
+            const elem = this._evaluateExpression(tree.args[0]);
+            if(!this.contains(elem))
+                throw(`Invalid Element (${elem})`);
+            if (tree.fn.name === 'inv')
+                return this.inverse(elem);
+            if (tree.fn.name === 'order')
+                return this.elementOrder(elem);
+            if (tree.fn.name === 'subGroupGeneratedByElement'){
+                return this.subGroupGeneratedByElement(elem);
+            }
+            throw('Invalid Expression');
+        }
         throw('Invalid Expression');
     }
 
@@ -213,7 +247,6 @@ export default class Group{
             return this._identity;
             
         if (n < 0) {
-            console.log(n)
             elem = this.inverse(elem);
             n = -n;
         }
@@ -224,7 +257,8 @@ export default class Group{
     }
 
     _preprocessExpression(expression){
-        return expression.replace('i*n*v*', 'inv')
-                .replace(/\|(.*)\|/, 'order($1)');
+        return expression.replace(/([a-zA-Z])\*/g, '$1')
+                .replace(/\|(.*)\|/, 'order($1)')
+                .replace(/<(.*)>/, 'subGroupGeneratedByElement($1)');
     }
 }
